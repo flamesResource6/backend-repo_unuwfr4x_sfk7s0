@@ -12,7 +12,8 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
 
 # Example schemas (replace with your own):
 
@@ -38,8 +39,26 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+# Social app schemas
+
+class Profile(BaseModel):
+    """Minimal user profile for the social grid"""
+    handle: str = Field(..., description="Unique username/handle")
+    display_name: str = Field(..., description="Public display name")
+    avatar_url: Optional[str] = Field(None, description="Avatar image URL")
+    bio: Optional[str] = Field(None, description="Short bio")
+
+class Post(BaseModel):
+    """Lightweight post for the activity feed"""
+    author_handle: str = Field(..., description="Handle of the author")
+    text: str = Field(..., max_length=280, description="Post content")
+    image_url: Optional[str] = Field(None, description="Optional image")
+    likes: int = Field(0, ge=0, description="Like count")
+    created_at: Optional[datetime] = Field(None, description="Creation timestamp; set automatically if missing")
+
+class Follow(BaseModel):
+    follower: str = Field(..., description="Follower handle")
+    following: str = Field(..., description="Following handle")
 
 # Note: The Flames database viewer will automatically:
 # 1. Read these schemas from GET /schema endpoint
